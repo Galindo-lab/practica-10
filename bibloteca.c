@@ -9,16 +9,6 @@ typedef struct {
      int size;                  /* tamaño de la memoria reservada*/
 } Array;
 
-
-void diplay_array(Array *a)
-{
-    for(int i = 0 ; i < a->used ; i++)
-    {
-        printf("%d - %d\n",i ,a->array[i]);
-    }
-}
-
-
 /* 1. Función que crea arreglo con N ceros. */
 
 void init_array(Array *a, int initialSize)
@@ -48,13 +38,16 @@ void add_array(Array *a, int element)
      a->array[a->used++] = element;
 }
 
-/* 3. Añadir un nuevo elemento en algún lugar que se seleccione del arreglo */
-/* (dentro del límite de elementos de éste). */
+/* 3. Añadir un nuevo elemento en algún lugar que se seleccione del
+ * arreglo (dentro del límite de elementos de éste). */
+
+/* NOTE: esto se puede optimizar, pero por ahora no tengo tiempo */
 
 void insert_array(Array *a, int element, int position)
 {
-    int mov = a->used - position; /* mov es la candidad de veces que se copiara
-                                   * de una posiscion a la pocicion anterior */
+    int mov = a->used - position; /* mov es la candidad de veces que se
+                                   * copiara de una posiscion a la pocicion
+                                   * anterior */
 
     /* Sí mov es menor a 0 significa que la posicion seleccionada es mas
      * grande que la cantidad de elementos disponibles en el array
@@ -66,13 +59,13 @@ void insert_array(Array *a, int element, int position)
      * Sí mov es mayor a la cantidad de elementos en el arreglo eso
      * significa que el parametro position es negativo */
 
-    if( mov < 0 && mov > a->used )
+    if( mov >= 0 && mov <= a->used  )
     {
         add_array(a, a->array[a->last_position]); /* incrementa el tamaño
                                                    * del array y copia el
                                                    * ultimo elemento al
                                                    * final. */
-        for(int i = 0; i < (mov-1); i++)
+        for(int i = 0; i < mov; i++)
         {
             /* copia el elemento en una posicion anterior hasta llegar a la
              * posicion que se desea rempalzar */
@@ -83,11 +76,55 @@ void insert_array(Array *a, int element, int position)
     }
     else
     {
-        exit(1);
+        fprintf(stderr, "Fuera de rango!, funcion insert_array\n");
+        exit(EXIT_FAILURE);
     }
 
 }
 
+/* 4. Eliminar un elemento del arreglo en cierta posición (dentro del límite
+ * de elementos de éste). */
+
+void remove_array(Array *a, int pos)
+{
+    for(int i = pos; i < a->last_position ; i++){
+        a->array[i] = a->array[i+1];
+    }
+
+    a->used--;
+    a->last_position--;
+}
+
+/* 5. Imprimir elementos. */
+
+void diplay_array(Array *a)
+{
+    printf("   id | value\n");
+    printf("------+------\n");
+    for(int i = 0 ; i < a->used ; i++)
+    {
+        printf("%5d | %5d\n",i ,a->array[i]);
+    }
+    printf("------+------\n");
+    printf(" reservado: %d\n", a->size);
+    printf("     usado: %d\n", a->used);
+    printf("    ultimo: %d\n", a->last_position);
+}
+
+/* 6. Reemplazar los elementos que coincidan con el valor dado por el usuario,
+ * por otro valor otorgado. */
+
+void replace_element_array(Array *a, int int_a, int int_b)
+{
+    for(int i = 0;i < a->used;i++)
+    {
+        if(a->array[i] == int_a)
+            a->array[i] = int_b;
+    }
+}
+
+/* 7. Función para vaciar el bloque que contiene los valores, liberando la
+ * memoria ocupada. */
 
 void free_array(Array *a)       /* libera el array */
 {
@@ -100,9 +137,64 @@ void free_array(Array *a)       /* libera el array */
      a->last_position = 0;
 }
 
+/* 8. Realizar funci ón que hace una copia de la estructura arreglo y la
+ * regresa como salida de la función. */
 
+Array copy_array(Array *a)
+{
+    Array cpy;
+    init_array(&cpy,a->size);
 
+    for(int i = 0; i < a->used; i++)
+    {
+        add_array(&cpy, a->array[i]);
+    }
 
+    return cpy;
+}
+
+/* 9. Realizar función “únicos”, que dado un arreglo regresa un arreglo
+ * nuevo con los valores no repetidos de este. */
+
+Array eliminate_duplicates_array(Array *a)
+{
+    Array l;                    /* lista de repetidos */
+    init_array(&l,1);
+    int a_size = a->used;
+
+    if(a_size > 0)
+    {
+        add_array(&l, a->array[0]); /* añade el primer elemento a la lista
+                                     * para tener algo para comparar*/
+        while(a_size--)
+        {
+            for(int i = 0; i < l.used; i++)
+            {
+                /* compara que no se repitan los elementos del array */
+                if( a->array[a_size] == l.array[i] )
+                {
+                    break;      /* sí se repiten se detiene el bucle */
+                }
+                else if( i+1 >= l.used )
+                {
+                    /* si se acaban las itineraciones se agrega a
+                     * la lista */
+                    add_array(&l, a->array[a_size]);
+                }
+
+            }
+        }
+
+    }
+    else
+    {
+        fprintf(stderr, "Fuera de rango!, funcion eliminate_duplicates_array\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return l;
+
+}
 
 
 
@@ -112,19 +204,28 @@ void free_array(Array *a)       /* libera el array */
 
 int main() {
     Array a;
+    Array b;
 
     init_array(&a, 1);
-    printf("a\n");
 
-    for(int i = 0; i < 10; i++)
+    for(int i = 0; i < 15; i++)
     {
-        add_array(&a, i);
+        add_array(&a, 1);
     }
 
-    insert_array(&a, 10, 3);
+    insert_array(&a, 10, 2);
+    remove_array(&a, 2);
+    insert_array(&a, 100, 2);
+    replace_element_array(&a,0,100);
 
+    b = eliminate_duplicates_array(&a);
+
+    printf("\narray a:\n");
     diplay_array(&a);
+    printf("\n\narray b:\n");
+    diplay_array(&b);
     free_array(&a);
+    free_array(&b);
 
     return 0;
 }
