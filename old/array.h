@@ -1,3 +1,6 @@
+#ifndef ARRAY_H
+#define ARRAY_H
+
 typedef struct {
      int *array;                /* direccionde puntero */
      int used;                  /* posisciones usadas */
@@ -25,7 +28,7 @@ void add_array(Array* , int);
 
 /* NOTE: esto se puede optimizar, pero por ahora no tengo tiempo */
 
-void insert_array(Array*, int element, int position);
+void insert_array(Array*, int, int);
 
 /* Eliminar un elemento del arreglo en cierta posición (dentro del límite
  * de elementos de éste).
@@ -45,7 +48,7 @@ void diplay_array(Array*);
  * @param int_a  elemento a buscar
  * @param int_b  elemento por el cual sera reemplazado*/
 
-void replace_element_array(Array*, int int_a, int int_b);
+void replace_element_array(Array*, int, int);
 
 /* Función para vaciar el bloque que contiene los valores, liberando la
  * memoria ocupada.
@@ -66,3 +69,5 @@ Array copy_array(Array*);
  * @return Array con los elementos sin repeticion*/
 
 Array eliminate_duplicates_array(Array*);
+
+#endif
