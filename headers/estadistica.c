@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "array.h"
 
@@ -54,9 +55,22 @@ float media(Array *a)
     return s/a->used;
 }
 
-
 /* mediana */
-/* desviación estándar */
+int mediana(Array *a)
+{
+    Array b = ordenar_cpy(a);
+    return b.array[ b.used / 2 ];
+}
 
+/* desviación estándar */
+float desviacion_estandar(Array *a)
+{
+    float media_pob = media(a);
+    float sumatoria = 0;
+    for(int i = 0;i < a->used;i++)
+        sumatoria += pow(a->array[i] - media_pob, 2);
+
+    return sqrt( sumatoria / a->used );
+}
 
 #endif

@@ -17,26 +17,22 @@ int main() {
         add_array(&a, 1+ rand()%10 );
     }
 
+    b = copy_array(&a);
+
 
     diplay_array(&a);
 
+    printf("minimo: %d\n",minimo(&a));
+    printf("maximo: %d\n",maximo(&a));
+    printf("media: %f\n",media(&a));
+    printf("mediana: %d\n",mediana(&a));
+    printf("desviacion: %f\n",desviacion_estandar(&a));
+
+    diplay_array(&a);
+
+    printf("--------------- \n");
     ordenar(&a);
-    printf("%f %f\n",suma(&a), media(&a));
-
     diplay_array(&a);
-
-    /* insert_array(&a, 10, 2); */
-    /* remove_array(&a, 2); */
-    /* insert_array(&a, 100, 2); */
-    /* replace_element_array(&a,0,100); */
-
-    /* b = eliminate_duplicates_array(&a); */
-
-    /* printf("\narray a:\n"); */
-    /* diplay_array(&a); */
-    /* printf("\n\narray b:\n"); */
-    /* diplay_array(&b); */
-
 
     free_array(&a);
     free_array(&b);

@@ -1,6 +1,6 @@
 
 output: debug/main.o debug/array.o
-	gcc debug/main.o debug/array.o -o output
+	gcc debug/main.o debug/array.o -lm -o output
 
 debug/main.o: main.c
 	gcc -c main.c -o debug/main.o
